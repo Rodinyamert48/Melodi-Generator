@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>İsimden Melodi</title>
+
+  <style>
+    :root{
+      --bg1:#0b0f1a;
+      --bg2:#000000;
+      --card:rgba(255,255,255,0.05);
+      --text:#ffffff;
+      --accent1:linear-gradient(135deg,#22c55e,#16a34a);
+      --accent2:linear-gradient(135deg,#3b82f6,#1d4ed8);
+    }
+
+    body.light{
+      --bg1:#e5e7eb;
+      --bg2:#cbd5e1;
+      --card:rgba(255,255,255,0.7);
+      --text:#0f172a;
+    }
+
+    body.gold{
+      --bg1:#000000;
+      --bg2:#0a0a0a;
+      --card:rgba(255, 215, 0, 0.08);
+      --text:#ffd700;
+    }
+
+    *{box-sizing:border-box;}
+
+    body{
+      margin:0;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family:Arial;
+      background:radial-gradient(circle at top,var(--bg1),var(--bg2));
+      color:var(--text);
+      transition:0.4s;
+      overflow:hidden;
+    }
+
+    .box{
+      width:90%;
+      max-width:360px;
+      padding:25px;
+      border-radius:16px;
+      background:var(--card);
+      backdrop-filter:blur(12px);
+      text-align:center;
+      box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    h1{font-size:20px;}
+
+    input,select{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+      outline:none;
+    }
+
+    button{
+      width:100%;
+      margin-top:10px;
+      padding:12px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      color:white;
+      background:var(--accent1);
+    }
+
+    button.secondary{background:var(--accent2);}
+
+    button:hover{transform:scale(1.03);}
+
+    /* TOP RIGHT THEME */
+    .themeToggle{
+      position:fixed;
+      top:15px;
+      right:15px;
+      width:60px;
+      height:30px;
+      background:#1f2937;
+      border-radius:50px;
+      display:flex;
+      align-items:center;
+      padding:5px;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .knob{
+      width:22px;
+      height:22px;
+      background:white;
+      border-radius:50%;
+      transition:0.4s;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+    }
+
+    body.light .knob{transform:translateX(28px);}
+
+    /* SECRET TOGGLE */
+    .secretToggle{
+      position:fixed;
+      top:15px;
+      left:15px;
+      padding:8px 12px;
+      border-radius:10px;
+      background:#111827;
+      color:white;
+      cursor:pointer;
+      font-size:12px;
+      user-select:none;
+    }
+
+    body.gold .secretToggle{
+      background:#3a2f00;
+      color:#ffd700;
+    }
+
+    /* FOOTER */
+    .leftBottom{
+      position:fixed;
+      bottom:10px;
+      left:10px;
+      font-size:12px;
+      opacity:0.7;
+    }
+
+    .rightBottom{
+      position:fixed;
+      bottom:10px;
+      right:10px;
+      font-size:12px;
+      opacity:0.7;
+    }
+
+    /* OVERLAY */
+    .overlay{
+      position:fixed;
+      top:0;left:0;
+      width:100%;height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
+      font-weight:bold;
+      background:rgba(0,0,0,0.6);
+      opacity:0;
+      pointer-events:none;
+      transition:0.3s;
+    }
+
+    .overlay.show{opacity:1;}
+
+    /* DISABLE MAIN TOGGLE */
+    .disabled{
+      pointer-events:none;
+      opacity:0.3;
+    }
+
+    @media(max-width:500px){
+      .box{width:92%;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOP RIGHT THEME -->
+<div class="themeToggle" id="themeBtn" onclick="toggleTheme()">
+  <div class="knob" id="icon">🌙</div>
+</div>
+
+<!-- SECRET TOGGLE -->
+<div class="secretToggle" onclick="toggleSecret()">🟡 Birlik Tema</div>
+
+<!-- FOOTER -->
+<div class="leftBottom">discord.gg/birlik</div>
+<div class="rightBottom">developed by rodinyamert</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay">BİRLİK TEMASI</div>
+
+<!-- BOX -->
+<div class="box">
+  <h1>İsimden Melodi</h1>
+  <input id="name" placeholder="İsmini yaz..." />
+  <select id="style">
+    <option value="happy">Mutlu</option>
+    <option value="calm">Sakin</option>
+    <option value="epic">Epik</option>
+  </select>
+  <button onclick="playName()">▶ Çal</button>
+</div>
+
+<script>
+let isLight=false;
+let isGold=false;
+
+function toggleTheme(){
+  if(isGold) return;
+  document.body.classList.toggle("light");
+  isLight=!isLight;
+  document.getElementById("icon").textContent=isLight?"☀️":"🌙";
+}
+
+function toggleSecret(){
+  isGold=!isGold;
+
+  if(isGold){
+    document.body.classList.add("gold");
+    document.getElementById("themeBtn").classList.add("disabled");
+    showOverlay();
+  }else{
+    document.body.classList.remove("gold");
+    document.getElementById("themeBtn").classList.remove("disabled");
+  }
+}
+
+function showOverlay(){
+  const o=document.getElementById("overlay");
+  o.classList.add("show");
+  setTimeout(()=>o.classList.remove("show"),3500);
+}
+
+const notes={
+  a:261.63,b:293.66,c:329.63,d:349.23,e:392.0,f:440.0,g:493.88,h:523.25,
+  i:587.33,j:659.25,k:698.46,l:783.99,m:880.0,n:987.77,o:1046.5,p:1174.66,
+  q:1318.51,r:1396.91,s:1567.98,t:1760.0,u:1975.53,v:2093.0,w:2349.32,x:2637.02,y:2793.83,z:3135.96
+};
+
+function getStyle(s){
+  if(s==="happy")return{tempo:0.18,type:"sine",octave:1};
+  if(s==="calm")return{tempo:0.35,type:"triangle",octave:0.8};
+  return{tempo:0.22,type:"sawtooth",octave:1.2};
+}
+
+async function playName(){
+  const ctx=new (window.AudioContext||window.webkitAudioContext)();
+  await ctx.resume();
+
+  const name=document.getElementById("name").value.toLowerCase();
+  const style=getStyle(document.getElementById("style").value);
+
+  const offline=new OfflineAudioContext(1,44100*10,44100);
+
+  let time=0;
+  const used={};
+
+  for(let i=0;i<name.length;i++){
+    const c=name[i];
+    if(!notes[c])continue;
+
+    used[c]=(used[c]||0)+1;
+
+    let freq=notes[c]*(1+(used[c]%3)*0.3)*style.octave;
+
+    const osc=offline.createOscillator();
+    const gain=offline.createGain();
+
+    osc.type=style.type;
+    osc.frequency.value=freq;
+
+    gain.gain.setValueAtTime(0.2,time);
+    gain.gain.exponentialRampToValueAtTime(0.0001,time+style.tempo);
+
+    osc.connect(gain);
+    gain.connect(offline.destination);
+
+    osc.start(time);
+    osc.stop(time+style.tempo);
+
+    time+=style.tempo;
+  }
+
+  const buffer=await offline.startRendering();
+
+  const ctx2=new AudioContext();
+  const source=ctx2.createBufferSource();
+  source.buffer=buffer;
+  source.connect(ctx2.destination);
+  source.start();
+}
+</script>
+
+</body>
+</html>
